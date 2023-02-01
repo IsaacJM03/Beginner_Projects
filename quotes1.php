@@ -1,3 +1,4 @@
+<!--Random quotes generator website-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <--relevant styling-->
     <style>
         body {
         font-family: 'Noto Sans', sans-serif;
@@ -42,7 +44,7 @@
 
 <?php
 echo '<h1>'.'<span style="color: 0000FF; font-size: 50px;">'."Welcome to the Total Football website!".'</h1>'."<br>";
-
+// array where quotes are stored
 $quotes_array = [
     "Playing football is very simple, but playing simple football is the hardest thing there is.",
 
@@ -82,13 +84,9 @@ $quotes_array = [
     "I'm not a prophet, I just think differently.",
 
     "You can't teach someone to be a good football player, they have to have the qualities within them.",
-
-
-
-
-
 ];
-
+    
+// calling rand function to randomly select quotes 
 $totalquotes = count($quotes_array);
 $random_quotes = rand(0, ($totalquotes) - 1);
 

@@ -22,28 +22,21 @@
         </form>
         <br>
  
-    <?php
-    
+    <?php    
     // checking if the user has ticked a box
-    function checked($post_array){
+    function displayMenu($post_array){
         if(empty($post_array)){
             echo 'Not Checked'."<br>";
         } else{
+            // loop through the array of user's input
+            $food_array = $post_array['food'];
+            foreach ($food_array as $food)
+            echo "You ordered "."$food" ."!". '<br>';    
      }
     }
-    // handling error in case box is left unticked
-    set_error_handler('checked', E_WARNING);
-    checked($_POST);
-    $array = $_POST['food'];
-    
-    // loop through the array of user's input
-    foreach ($array as $food)
-        echo "You ordered "."$food" ."!". '<br>';
-
+    //calling the function
+    displayMenu($_POST);      
     ?>
-    
-
-
-    
+   
     </body>
 </html>

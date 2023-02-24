@@ -54,10 +54,19 @@
     </style>
 </head>
 <body>
-    <form action ="calc2.php" method="post">
+    <form action ="Calculator.php" method="post">
+    <label>First Number</label>
     <input type="number" name="first" placeholder="Enter first number"><br>
+    <label>Second Number</label>
     <input type="number" name="second" placeholder="Enter second number"><br>
-    <input type="text" name="operation" placeholder="Enter operation(+,-,*,/)"><br>
+    <label>Third Number</label>
+    <input type="number" name="third" placeholder="Enter third number"><br>
+    <label>Order of Operation</label>
+    <input type="radio" name="operationOrder[]" value="add" <?php if($_POST['operationOrder']=='add') echo 'checked="checked"'; ?> />Addition
+    <input type="radio" name="operationOrder[]" value="subtract" <?php if($_POST['operationOrder']=='subtract') echo 'checked="checked"'; ?> />Subtraction
+    <input type="radio" name="operationOrder[]" value="multiply" <?php if($_POST['operationOrder']=='multiply') echo 'checked="checked"'; ?> />Multiplication
+    <input type="radio" name="operationOrder[]" value="divide" <?php if($_POST['operationOrder']=='divide') echo 'checked="checked"'; ?> />Division
+
     <br />
     <input type="submit" value="Calculate"><br>
     </form>
@@ -65,39 +74,25 @@
 </html>
 
 <?php 
-// declare(strict_types=1);
-include "/home/isaac-lino/www/functions.php";
+require_once 'CalculatorFunctions.php';
+
+$x= $_POST['first'];
+$y= $_POST['second'];
+$z= $_POST['third'];
+if (isset($_POST['operationOrder'])) {
+  $operationOrder = $_POST['operationOrder'];
+} else {
+  $operationOrder = []; // or whatever default value you want to use
+}
 
 
-if (!empty($_POST)) {
-    $first = (int) trim($_POST['first']);
-    $second = (int) trim($_POST['second']);
-    $operation = trim($_POST['operation']);
-    //switch statement to carry out operations on the figures
-    switch ($operation) {
-        case "+":
-            $result = (new CalculatorFunctions)->add($first, $second);
-            echo '<br />';
-            break;
-        case "-":
-            $result = (new CalculatorFunctions)->sub($first, $second);
-            echo '<br />';
-            break;
-        case "/":
-            $result = (new CalculatorFunctions)->divide($first, $second);
-            echo '<br />';
-            break;
-        case "*":
-            $result = (new CalculatorFunctions)->multiply($first, $second);
-            echo '<br />';
-            break;
-        default:
-            echo 'Invalid operand'.'<br/>';
-            break;
-    }
-
-}elseif(empty($_POST)){
-    echo "<div class='default'>Enter a valid value and operand,please</div>".'<br />';
-};
+if(empty($_POST)){
+  echo "<div class='default'>Enter a valid value and operand,please</div>".'<br />';
+}else{
+$calculator = new CalculatorFunctions();
+$calculator->setNumbers($x,$y,$z);
+$calculator->setOrder($operationOrder);
+$result=$calculator->calculate();
 
 echo "<div class= 'result'>Result:$result</div>".'<br />';
+}

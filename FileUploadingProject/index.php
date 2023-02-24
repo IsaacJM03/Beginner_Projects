@@ -25,15 +25,4 @@ include 'fileupload/fileupload.php';
 
 $query = $db->query("SELECT * FROM files ORDER by uploaded_on DESC");
 
-if($query->num_rows>0){
-    while ($row=$query->fetch_assoc()){
-        $url='fileupload/fileupload/'.$row["file_name"];   
 
-?>
-<img src ="<?php echo $url;?>" alt=""/>
-
-<?php 
-    }
-}else{?>
-    <p>No image(s) found...</p>
-<?php }?>

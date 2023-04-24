@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
+use App\Contracts\EntityManagerServiceInterface;
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\DataObjects\TransactionData;
 use App\Entity\Receipt;
@@ -26,11 +27,12 @@ class TransactionController
         private readonly TransactionService $transactionService,
         private readonly ResponseFormatter $responseFormatter,
         private readonly RequestService $requestService,
-        private readonly CategoryService $categoryService
+        private readonly CategoryService $categoryService,
+        private readonly EntityManagerServiceInterface $entityManagerService
     ) {
     }
 
-    public function index(Request $request, Response $response): Response
+    public function index(Response $response): Response
     {
         return $this->twig->render(
             $response,
@@ -45,7 +47,7 @@ class TransactionController
             $request->getParsedBody()
         );
 
-        $this->transactionService->create(
+        $transaction = $this->transactionService->create(
             new TransactionData(
                 $data['description'],
                 (float) $data['amount'],
@@ -54,25 +56,20 @@ class TransactionController
             ),
             $request->getAttribute('user')
         );
+        $this->entityManagerService->sync($transaction);
 
         return $response;
     }
 
-    public function delete(Request $request, Response $response, array $args): Response
+    public function delete(esponse $response, Transaction $transaction): Response
     {
-        $this->transactionService->delete((int) $args['id']);
+        $this->entityManagerService->delete($transaction,true);
 
         return $response;
     }
 
-    public function get(Request $request, Response $response, array $args): Response
+    public function get(Response $response, Transaction $transaction): Response
     {
-        $transaction = $this->transactionService->getById((int) $args['id']);
-
-        if (! $transaction) {
-            return $response->withStatus(404);
-        }
-
         $data = [
             'id'          => $transaction->getId(),
             'description' => $transaction->getDescription(),
@@ -84,25 +81,21 @@ class TransactionController
         return $this->responseFormatter->asJson($response, $data);
     }
 
-    public function update(Request $request, Response $response, array $args): Response
+    public function update(Request $request, Response $response, Transaction $transaction): Response
     {
         $data = $this->requestValidatorFactory->make(TransactionRequestValidator::class)->validate(
-            $args + $request->getParsedBody()
+            $request->getParsedBody()
         );
 
-        $id = (int) $data['id'];
-
-        if (! $id || ! ($transaction = $this->transactionService->getById($id))) {
-            return $response->withStatus(404);
-        }
-
-        $this->transactionService->update(
-            $transaction,
-            new TransactionData(
-                $data['description'],
-                (float) $data['amount'],
-                new DateTime($data['date']),
-                $data['category']
+        $this->entityManagerService->sync(
+            $this->transactionService->update(
+                $transaction,
+                new TransactionData(
+                    $data['description'],
+                    (float) $data['amount'],
+                    new DateTime($data['date']),
+                    $data['category']
+                )
             )
         );
 
@@ -120,6 +113,7 @@ class TransactionController
                 'amount'      => $transaction->getAmount(),
                 'date'        => $transaction->getDate()->format('m/d/Y g:i A'),
                 'category'    => $transaction->getCategory()?->getName(),
+                'wasReviewed' => $transaction->wasReviewed(),
                 'receipts'    => $transaction->getReceipts()->map(fn(Receipt $receipt) => [
                     'name' => $receipt->getFilename(),
                     'id'   => $receipt->getId(),
@@ -135,5 +129,12 @@ class TransactionController
             $params->draw,
             $totalTransactions
         );
+    }
+    public function toggleReviewed(Response $response, Transaction $transaction):Response
+    {        
+        $this->transactionService->toggleReviewed($transaction);
+        $this->entityManagerService->sync();
+
+        return $response;
     }
 }

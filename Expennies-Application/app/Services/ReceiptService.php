@@ -5,11 +5,11 @@ declare(strict_types = 1);
 namespace App\Services;
 
 use App\Entity\Receipt;
-use Doctrine\ORM\EntityManager;
+use App\Contracts\EntityManagerServiceInterface;
 
 class ReceiptService
 {
-    public function __construct(private readonly EntityManager $entityManager)
+    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
     {
     }
 
@@ -23,8 +23,6 @@ class ReceiptService
         $receipt->setMediaType($mediaType);
         $receipt->setCreatedAt(new \DateTime());
 
-        $this->entityManager->persist($receipt);
-        $this->entityManager->flush();
 
         return $receipt;
     }
@@ -34,9 +32,4 @@ class ReceiptService
         return $this->entityManager->find(Receipt::class, $id);
     }
 
-    public function delete(Receipt $receipt): void
-    {
-        $this->entityManager->remove($receipt);
-        $this->entityManager->flush();
-    }
 }

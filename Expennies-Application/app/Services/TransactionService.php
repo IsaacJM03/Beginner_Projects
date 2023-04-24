@@ -4,18 +4,19 @@ declare(strict_types = 1);
 
 namespace App\Services;
 
+use App\Contracts\EntityManagerServiceInterface;
 use App\DataObjects\DataTableQueryParams;
 use App\DataObjects\TransactionData;
 use App\Entity\Transaction;
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class TransactionService
 {
-    public function __construct(private readonly EntityManager $entityManager)
+    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
     {
     }
+
 
     public function create(TransactionData $transactionData, User $user): Transaction
     {
@@ -56,13 +57,7 @@ class TransactionService
         return new Paginator($query);
     }
 
-    public function delete(int $id): void
-    {
-        $transaction = $this->entityManager->find(Transaction::class, $id);
 
-        $this->entityManager->remove($transaction);
-        $this->entityManager->flush();
-    }
 
     public function getById(int $id): ?Transaction
     {
@@ -76,8 +71,13 @@ class TransactionService
         $transaction->setDate($transactionData->date);
         $transaction->setCategory($transactionData->category);
 
-        $this->entityManager->persist($transaction);
 
         return $transaction;
+    }
+
+    public function toggleReviewed(Transaction $transaction):void
+    {
+        $transaction->setReviewed(! $transaction->wasReviewed());
+
     }
 }

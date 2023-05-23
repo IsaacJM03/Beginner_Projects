@@ -10,6 +10,7 @@ use App\Entity\Transaction;
 use App\RequestValidators\UploadReceiptRequestValidator;
 use App\Services\ReceiptService;
 use App\Services\TransactionService;
+use App\Entity\Receipt;
 use League\Flysystem\Filesystem;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -44,9 +45,9 @@ class ReceiptController
         return $response;
     }
 
-    public function download(Request $request, Transaction $transaction ,Response $response): Response
+    public function download(Request $request, Transaction $transaction ,Response $response,Receipt $receipt): Response
     {
-        if ($receipt->getTransaction()->getId() !== $transactionId->getId()) {
+        if ($receipt->getTransaction()->getId() !== $transaction->getId()) {
             return $response->withStatus(401);
         }
 
@@ -58,9 +59,9 @@ class ReceiptController
         return $response->withBody(new Stream($file));
     }
 
-    public function delete(Request $request, Response $response, Receipt $receipt): Response
+    public function delete(Request $request, Response $response, Receipt $receipt,Transaction $transaction): Response
     {
-        if ($receipt->getTransaction()->getId() !== $transactionId->getId()) {
+        if ($receipt->getTransaction()->getId() !== $transaction->getId()) {
             return $response->withStatus(401);
         }
 

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 use App\Auth;
 use App\Config;
+use App\Filters\UserFilter;
 use App\Contracts\AuthInterface;
 use App\Contracts\EntityManagerServiceInterface;
 use App\Contracts\RequestValidatorFactoryInterface;
@@ -31,7 +32,12 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\App;
 use Slim\Csrf\Guard;
 use Slim\Factory\AppFactory;
+use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Slim\Views\Twig;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\BodyRendererInterface;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
 use Symfony\Component\Asset\Package;
 use Symfony\Component\Asset\Packages;
@@ -74,6 +80,8 @@ return [
             $config->get('doctrine.entity_dir'),
             $config->get('doctrine.dev_mode')
         );
+
+        $ormConfig->addFilter('user', UserFilter::class);
 
         return new EntityManager(
             DriverManager::getConnection($config->get('doctrine.connection'), $ormConfig),
@@ -140,4 +148,10 @@ return [
         return $clockwork;
     },
     EntityManagerServiceInterface::class  =>fn(EntityManagerInterface $entityManager) => new EntityManagerService($entityManager),
+    MailerInterface::class => function(Config $config) {
+        $transport = Transport::fromDsn($config->get('mailer.dsn'));
+
+        return new Mailer($transport);
+    },
+    BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment())
 ];

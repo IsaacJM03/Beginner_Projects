@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230219220830 extends AbstractMigration
+final class Version20230523115227 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,12 @@ final class Version20230219220830 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE receipts ADD media_type VARCHAR(255) NOT NULL AFTER storage_filename');
+        $this->addSql('ALTER TABLE users ADD verified_at DATETIME DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE receipts DROP media_type');
+        $this->addSql('ALTER TABLE users DROP verified_at');
     }
 }

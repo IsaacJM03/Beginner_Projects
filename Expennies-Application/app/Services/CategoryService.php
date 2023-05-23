@@ -12,7 +12,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class CategoryService
 {
-    public function __construct(private readonly EntityManagerServiceInterface $entityMaanger)
+    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
     {
     }
 

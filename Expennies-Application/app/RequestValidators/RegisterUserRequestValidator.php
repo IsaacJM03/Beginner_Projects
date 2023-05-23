@@ -13,7 +13,7 @@ use Valitron\Validator;
 
 class RegisterUserRequestValidator implements RequestValidatorInterface
 {
-    public function __construct(private readonly EntityManagerServiceInterface $entityManagerService)
+    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
     {
     }
 

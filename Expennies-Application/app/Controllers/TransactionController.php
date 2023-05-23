@@ -61,7 +61,7 @@ class TransactionController
         return $response;
     }
 
-    public function delete(esponse $response, Transaction $transaction): Response
+    public function delete(Response $response, Transaction $transaction): Response
     {
         $this->entityManagerService->delete($transaction,true);
 

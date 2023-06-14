@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 use App\Auth;
 use App\Config;
-use App\Filters\UserFilter;
 use App\Contracts\AuthInterface;
 use App\Contracts\EntityManagerServiceInterface;
 use App\Contracts\RequestValidatorFactoryInterface;
@@ -15,6 +14,7 @@ use App\DataObjects\SessionConfig;
 use App\Enum\AppEnvironment;
 use App\Enum\SameSite;
 use App\Enum\StorageDriver;
+use App\Filters\UserFilter;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RouteEntityBindingStrategy;
 use App\Services\EntityManagerService;
@@ -32,16 +32,17 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\App;
 use Slim\Csrf\Guard;
 use Slim\Factory\AppFactory;
-use Symfony\Bridge\Twig\Mime\BodyRenderer;
+use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\Twig;
+use Symfony\Bridge\Twig\Extension\AssetExtension;
+use Symfony\Bridge\Twig\Mime\BodyRenderer;
+use Symfony\Component\Asset\Package;
+use Symfony\Component\Asset\Packages;
+use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\BodyRendererInterface;
-use Symfony\Bridge\Twig\Extension\AssetExtension;
-use Symfony\Component\Asset\Package;
-use Symfony\Component\Asset\Packages;
-use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
@@ -75,7 +76,7 @@ return [
     Config::class                           => create(Config::class)->constructor(
         require CONFIG_PATH . '/app.php'
     ),
-    EntityManagerInterface::class                    => function (Config $config) {
+    EntityManagerInterface::class           => function (Config $config) {
         $ormConfig = ORMSetup::createAttributeMetadataConfiguration(
             $config->get('doctrine.entity_dir'),
             $config->get('doctrine.dev_mode')
@@ -132,14 +133,14 @@ return [
     'csrf'                                  => fn(ResponseFactoryInterface $responseFactory, Csrf $csrf) => new Guard(
         $responseFactory, failureHandler: $csrf->failureHandler(), persistentTokenMode: true
     ),
-    Filesystem::class => function(Config $config) {
-        $adapter = match($config->get('storage.driver')) {
+    Filesystem::class                       => function (Config $config) {
+        $adapter = match ($config->get('storage.driver')) {
             StorageDriver::Local => new League\Flysystem\Local\LocalFilesystemAdapter(STORAGE_PATH),
         };
 
         return new League\Flysystem\Filesystem($adapter);
     },
-    Clockwork::class => function(EntityManagerInterface $entityManager) {
+    Clockwork::class                        => function (EntityManagerInterface $entityManager) {
         $clockwork = new Clockwork();
 
         $clockwork->storage(new FileStorage(STORAGE_PATH . '/clockwork'));
@@ -147,11 +148,14 @@ return [
 
         return $clockwork;
     },
-    EntityManagerServiceInterface::class  =>fn(EntityManagerInterface $entityManager) => new EntityManagerService($entityManager),
-    MailerInterface::class => function(Config $config) {
+    EntityManagerServiceInterface::class    => fn(EntityManagerInterface $entityManager) => new EntityManagerService(
+        $entityManager
+    ),
+    MailerInterface::class                  => function (Config $config) {
         $transport = Transport::fromDsn($config->get('mailer.dsn'));
 
         return new Mailer($transport);
     },
-    BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment())
+    BodyRendererInterface::class            => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment()),
+    RouteParserInterface::class             => fn(App $app) => $app->getRouteCollector()->getRouteParser(),
 ];

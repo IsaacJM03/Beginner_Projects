@@ -5,11 +5,12 @@ declare(strict_types = 1);
 namespace App\Mail;
 
 use App\Config;
+use App\Entity\UserLoginCode;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\BodyRendererInterface;
 
-class SignupEmail
+class TwoFactorAuthEmail
 {
     public function __construct(
         private readonly Config $config,
@@ -18,17 +19,17 @@ class SignupEmail
     ) {
     }
 
-    public function send(string $to): void
+    public function send(UserLoginCode $userLoginCode): void
     {
+        $email   = $userLoginCode->getUser()->getEmail();
         $message = (new TemplatedEmail())
             ->from($this->config->get('mailer.from'))
-            ->to($to)
-            ->subject('Welcome to Expennies')
-            ->htmlTemplate('emails/signup.html.twig')
+            ->to($email)
+            ->subject('Your Expennies Verification Code')
+            ->htmlTemplate('emails/two_factor.html.twig')
             ->context(
                 [
-                    'activationLink' => '#',
-                    'expirationDate' => new \DateTime('+30 minutes'),
+                    'code' => $userLoginCode->getCode(),
                 ]
             );
 
@@ -36,5 +37,4 @@ class SignupEmail
 
         $this->mailer->send($message);
     }
-
 }

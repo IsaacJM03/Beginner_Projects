@@ -9,10 +9,10 @@ use App\Contracts\SessionInterface;
 use App\Contracts\UserInterface;
 use App\Contracts\UserProviderServiceInterface;
 use App\DataObjects\RegisterUserData;
-use App\Mail\TwoFactorAuthEmail;
-use App\Services\UserLoginCodeService;
 use App\Enum\AuthAttemptStatus;
 use App\Mail\SignupEmail;
+use App\Mail\TwoFactorAuthEmail;
+use App\Services\UserLoginCodeService;
 
 class Auth implements AuthInterface
 {
@@ -59,7 +59,6 @@ class Auth implements AuthInterface
         }
 
         if ($user->hasTwoFactorAuthEnabled()) {
-            
             $this->startLoginWith2FA($user);
 
             return AuthAttemptStatus::TWO_FACTOR_AUTH;
@@ -89,7 +88,7 @@ class Auth implements AuthInterface
 
         $this->logIn($user);
 
-        $this->signupEmail->send($user->getEmail());
+        $this->signupEmail->send($user);
 
         return $user;
     }

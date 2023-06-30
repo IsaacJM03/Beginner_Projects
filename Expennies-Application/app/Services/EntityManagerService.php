@@ -4,9 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Services;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Contracts\EntityManagerServiceInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * @mixin EntityManagerInterface
+ */
 class EntityManagerService implements EntityManagerServiceInterface
 {
     public function __construct(protected readonly EntityManagerInterface $entityManager)
@@ -35,7 +38,7 @@ class EntityManagerService implements EntityManagerServiceInterface
     {
         $this->entityManager->remove($entity);
 
-        if($sync){
+        if ($sync) {
             $this->sync();
         }
     }

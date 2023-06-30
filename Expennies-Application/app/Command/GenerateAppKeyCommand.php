@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Command;
 
+namespace App\Command;
+
 use App\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,3 +64,4 @@ class GenerateAppKeyCommand extends Command
         return Command::SUCCESS;
     }
 }
+

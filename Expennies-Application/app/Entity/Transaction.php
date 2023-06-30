@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
+use App\Contracts\OwnableInterface;
 use App\Entity\Traits\HasTimestamps;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
-use App\Contracts\OwnableInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -27,7 +27,7 @@ class Transaction implements OwnableInterface
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
 
-    #[Column(name: 'was_reviewed',options:['default'=>0])]
+    #[Column(name: 'was_reviewed', options: ['default' => 0])]
     private bool $wasReviewed;
 
     #[Column]
@@ -45,12 +45,12 @@ class Transaction implements OwnableInterface
     #[ManyToOne(inversedBy: 'transactions')]
     private ?Category $category;
 
-    #[OneToMany(mappedBy: 'transaction', targetEntity: Receipt::class,cascade:['remove'])]
+    #[OneToMany(mappedBy: 'transaction', targetEntity: Receipt::class, cascade: ['remove'])]
     private Collection $receipts;
 
     public function __construct()
     {
-        $this->receipts = new ArrayCollection();
+        $this->receipts    = new ArrayCollection();
         $this->wasReviewed = false;
     }
 
@@ -131,14 +131,12 @@ class Transaction implements OwnableInterface
         return $this;
     }
 
-    public function wasReviewed():bool
+    public function wasReviewed(): bool
     {
-
         return $this->wasReviewed;
     }
 
-
-    public function setReviewed(bool $wasReviewed):Transaction
+    public function setReviewed(bool $wasReviewed): Transaction
     {
         $this->wasReviewed = $wasReviewed;
 

@@ -56,6 +56,7 @@ class TransactionController
             ),
             $request->getAttribute('user')
         );
+
         $this->entityManagerService->sync($transaction);
 
         return $response;
@@ -63,7 +64,7 @@ class TransactionController
 
     public function delete(Response $response, Transaction $transaction): Response
     {
-        $this->entityManagerService->delete($transaction,true);
+        $this->entityManagerService->delete($transaction, true);
 
         return $response;
     }
@@ -130,8 +131,9 @@ class TransactionController
             $totalTransactions
         );
     }
-    public function toggleReviewed(Response $response, Transaction $transaction):Response
-    {        
+
+    public function toggleReviewed(Response $response, Transaction $transaction): Response
+    {
         $this->transactionService->toggleReviewed($transaction);
         $this->entityManagerService->sync();
 

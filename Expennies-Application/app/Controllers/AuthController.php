@@ -7,8 +7,8 @@ namespace App\Controllers;
 use App\Contracts\AuthInterface;
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\DataObjects\RegisterUserData;
-use App\Exception\ValidationException;
 use App\Enum\AuthAttemptStatus;
+use App\Exception\ValidationException;
 use App\RequestValidators\RegisterUserRequestValidator;
 use App\RequestValidators\TwoFactorLoginRequestValidator;
 use App\RequestValidators\UserLoginRequestValidator;
@@ -75,7 +75,7 @@ class AuthController
 
         return $response->withHeader('Location', '/')->withStatus(302);
     }
-    
+
     public function twoFactorLogin(Request $request, Response $response): Response
     {
         $data = $this->requestValidatorFactory->make(TwoFactorLoginRequestValidator::class)->validate(

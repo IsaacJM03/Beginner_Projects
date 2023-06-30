@@ -48,7 +48,6 @@ class CategoryService
         return new Paginator($query);
     }
 
-
     public function getById(int $id): ?Category
     {
         return $this->entityManager->find(Category::class, $id);
@@ -57,7 +56,6 @@ class CategoryService
     public function update(Category $category, string $name): Category
     {
         $category->setName($name);
-
 
         return $category;
     }

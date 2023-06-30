@@ -4,11 +4,10 @@ declare(strict_types = 1);
 
 namespace App\RequestValidators;
 
-use App\Contracts\RequestValidatorInterface;
 use App\Contracts\EntityManagerServiceInterface;
+use App\Contracts\RequestValidatorInterface;
 use App\Entity\User;
 use App\Exception\ValidationException;
-use Doctrine\ORM\EntityManagerInterface;
 use Valitron\Validator;
 
 class RegisterUserRequestValidator implements RequestValidatorInterface
@@ -21,7 +20,7 @@ class RegisterUserRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
-        $v->rule('required', ['name', 'email', 'password', 'confirmPassword']);
+        $v->rule('required', ['name', 'email', 'password', 'confirmPassword'])->message('Required field');
         $v->rule('email', 'email');
         $v->rule('equals', 'confirmPassword', 'password')->label('Confirm Password');
         $v->rule(

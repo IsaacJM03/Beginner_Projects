@@ -36,12 +36,12 @@ class TransactionImportService
 
             $transactionData = new TransactionData($description, (float) $amount, $date, $category);
 
-            $this->entityManagerService>create(
+            $this->entityManagerService->persist(
                 $this->transactionService->create($transactionData, $user)
             );
 
             if ($count % $batchSize === 0) {
-                $this->entityManagerService->flush();
+                $this->entityManagerService->sync();
                 $this->entityManagerService->clear(Transaction::class);
 
                 $count = 1;

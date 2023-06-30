@@ -5,9 +5,9 @@ declare(strict_types = 1);
 namespace App\Middleware;
 
 use App\Contracts\AuthInterface;
+use App\Contracts\EntityManagerServiceInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use App\Contracts\EntityManagerServiceInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -29,7 +29,7 @@ class AuthMiddleware implements MiddlewareInterface
             $this->twig->getEnvironment()->addGlobal('auth', ['id' => $user->getId(), 'name' => $user->getName()]);
 
             $this->entityManagerService->enableUserAuthFilter($user->getId());
-            
+
             return $handler->handle($request->withAttribute('user', $user));
         }
 

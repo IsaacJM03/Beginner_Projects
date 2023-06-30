@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
-use App\Contracts\RequestValidatorFactoryInterface;
 use App\Contracts\EntityManagerServiceInterface;
+use App\Contracts\RequestValidatorFactoryInterface;
 use App\Entity\Category;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\UpdateCategoryRequestValidator;
@@ -40,6 +40,7 @@ class CategoryController
         );
 
         $category = $this->categoryService->create($data['name'], $request->getAttribute('user'));
+
         $this->entityManagerService->sync($category);
 
         return $response->withHeader('Location', '/categories')->withStatus(302);
@@ -47,7 +48,7 @@ class CategoryController
 
     public function delete(Response $response, Category $category): Response
     {
-        $this->entityManagerService->delete($category,true);
+        $this->entityManagerService->delete($category, true);
 
         return $response;
     }
@@ -65,13 +66,7 @@ class CategoryController
             $request->getParsedBody()
         );
 
-        $category = $this->categoryService->getById((int) $data['id']);
-
-        if (! $category) {
-            return $response->withStatus(404);
-        }
-
-        $this->entityManagerService->sync($this->categoryService->update($category,$date['name']));
+        $this->entityManagerService->sync($this->categoryService->update($category, $data['name']));
 
         return $response;
     }

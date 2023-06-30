@@ -85,6 +85,7 @@ window.addEventListener('DOMContentLoaded', function () {
                         </div>
                         <div class="dropdown">
                             <i class="bi bi-gear fs-4" role="button" data-bs-toggle="dropdown"></i>
+
                             <ul class="dropdown-menu">
                                 <li>
                                     <a class="dropdown-item open-receipt-upload-btn" href="#" data-id="${ row.id }">

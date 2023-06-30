@@ -17,7 +17,6 @@ class TransactionService
     {
     }
 
-
     public function create(TransactionData $transactionData, User $user): Transaction
     {
         $transaction = new Transaction();
@@ -57,8 +56,6 @@ class TransactionService
         return new Paginator($query);
     }
 
-
-
     public function getById(int $id): ?Transaction
     {
         return $this->entityManager->find(Transaction::class, $id);
@@ -71,13 +68,11 @@ class TransactionService
         $transaction->setDate($transactionData->date);
         $transaction->setCategory($transactionData->category);
 
-
         return $transaction;
     }
 
-    public function toggleReviewed(Transaction $transaction):void
+    public function toggleReviewed(Transaction $transaction): void
     {
         $transaction->setReviewed(! $transaction->wasReviewed());
-
     }
 }

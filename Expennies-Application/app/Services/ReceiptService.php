@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Services;
 
-use App\Entity\Receipt;
 use App\Contracts\EntityManagerServiceInterface;
+use App\Entity\Receipt;
 
 class ReceiptService
 {
@@ -23,7 +23,6 @@ class ReceiptService
         $receipt->setMediaType($mediaType);
         $receipt->setCreatedAt(new \DateTime());
 
-
         return $receipt;
     }
 
@@ -31,5 +30,4 @@ class ReceiptService
     {
         return $this->entityManager->find(Receipt::class, $id);
     }
-
 }

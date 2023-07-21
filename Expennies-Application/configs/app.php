@@ -44,4 +44,18 @@ return [
         'dsn'  => $_ENV['MAILER_DSN'],
         'from' => $_ENV['MAILER_FROM'],
     ],
+    'redis' => [
+        'host'     => $_ENV['REDIS_HOST'],
+        'port'     => $_ENV['REDIS_PORT'],
+        'password' => $_ENV['REDIS_PASSWORD'],
+    ],
+    'trusted_proxies' => [],
+    'limiter' => [
+        'id' => [
+            'id' => 'default',
+            'policy' => 'fixed_window',
+            'interval' => '1 minute',
+            'limit' => 25,
+        ]
+    ]
 ];
